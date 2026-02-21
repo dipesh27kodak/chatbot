@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Chatbot</title>
+    <style>
+        body { text-align: center; font-family: Cambria; }
+        textarea { resize: none; text-align: left; }
+        input { width: 300px; padding: 5px; }
+        button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>AI Chatbot</h1>
+
+    <form method="POST">
+        <textarea name="chat" rows="10" cols="60" readonly>
+{{ chat if chat else "" }}
+        </textarea>
+        <br><br>
+
+        <input type="text" name="qts" placeholder="Enter Question" required>
+        <button type="submit">Ask</button>
+    </form>
+
+</body>
+</html>
