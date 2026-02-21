@@ -2,16 +2,21 @@ from flask import *
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import os
 
-data = pd.read_csv("conv.csv")
+# Safe CSV path for Render
+base_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(base_dir, "conv.csv")
+data = pd.read_csv(csv_path)
 
 app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 def home():
     chat = ""
+
     if request.method == "POST":
-        old_chat = request.form["chat"]
+        old_chat = request.form.get("chat", "")
         qts = request.form["qts"]
 
         texts = (data["question"].str.lower()).tolist()
@@ -27,17 +32,18 @@ def home():
         result = data.sort_values(by="score", ascending=False)
 
         if result.iloc[0]["score"] < 10:
-            msg = "chitu => sorry i dont know please contact - 7498465040"
+            msg = "Bot: Sorry, I don’t know that. Please contact 7498465040."
         else:
             ans = result.head(1)["answer"].values[0]
-            msg = "chitu => " + ans
+            msg = "Bot: " + ans
 
-        new_chat = "you said " + qts + "\n => " + msg
-        chat = old_chat + "\n" + new_chat
+        new_chat = f"You: {qts}\n{msg}\n"
+        chat = old_chat + new_chat
 
-        return render_template("home.html", msg=msg, chat=chat.strip())
+        return render_template("home.html", chat=chat.strip())
 
     return render_template("home.html")
 
 
-#app.run(debug=True, use_reloader=True)
+if __name__ == "__main__":
+   # app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
